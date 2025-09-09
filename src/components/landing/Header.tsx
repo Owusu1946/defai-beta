@@ -43,7 +43,7 @@ const Header = () => {
 							height={32}
 							className="w-6 h-6"
 						/>
-						<h1 className="text-sm font-bold text-foreground">Defai  <span className="text-muted-foreground font-light ml-2">EthOxford</span></h1>
+						<h1 className="text-sm font-bold text-foreground">Defai  <span className="text-muted-foreground font-light ml-2">Beta</span></h1>
 					</div>
 				</a>
 
