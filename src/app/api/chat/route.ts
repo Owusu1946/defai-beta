@@ -50,9 +50,10 @@ const selectedLocalModel = LOCAL_MODELS["llama"];
 
 export async function POST(req: Request) {
 	try {
-		const { messages, isLocal } = await req.json();
+		const { messages, isLocal, openaiApiKey } = await req.json();
 		console.log("[CHAT-API] Incoming messages:", messages);
 		console.log('isLocal:', isLocal);
+		console.log('openaiApiKey provided:', !!openaiApiKey);
 		
 		messages.unshift(systemPrompt);
 
@@ -68,12 +69,30 @@ export async function POST(req: Request) {
 		let result;
 
 		if (!isLocal) {
-			result = streamText({
-				model: openai("gpt-4o"),
-				messages,
-				tools,
-				maxSteps: 5,
-			});
+			// Use user's API key if provided, otherwise fall back to server's key
+			if (openaiApiKey) {
+				// Temporarily set the environment variable for this request
+				const originalApiKey = process.env.OPENAI_API_KEY;
+				process.env.OPENAI_API_KEY = openaiApiKey;
+				
+				result = streamText({
+					model: openai("gpt-4o"),
+					messages,
+					tools,
+					maxSteps: 5,
+				});
+				
+				// Restore original API key
+				process.env.OPENAI_API_KEY = originalApiKey;
+			} else {
+				// Use default OpenAI client with server's API key
+				result = streamText({
+					model: openai("gpt-4o"),
+					messages,
+					tools,
+					maxSteps: 5,
+				});
+			}
 		} else {
 			const ollama = createOllama({ baseURL: process.env.OLLAMA_URL + "/api" });
 			result = streamText({

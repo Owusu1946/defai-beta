@@ -19,6 +19,8 @@ import { LampContainer } from "../ui/lamp";
 import { Textarea } from "../ui/textarea";
 import Image from "next/image";
 import { Loader2, Plus } from "lucide-react";
+import { ApiKeyDialog } from "../ui/api-key-dialog";
+import useChatStore from "@/app/hooks/useChatStore";
 
 export default function LandingPage() {
 	const chainId = useChainId();
@@ -27,6 +29,8 @@ export default function LandingPage() {
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasLoaded, setHasLoaded] = useState(false);
+	const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
+	const { openaiApiKey, setOpenaiApiKey } = useChatStore();
 
 	useEffect(() => {
 		setHasLoaded(true);
@@ -36,7 +40,13 @@ export default function LandingPage() {
 		if (isConnected && chainId !== avalancheFuji.id) {
 			switchChain?.({ chainId: avalancheFuji.id });
 		}
-	}, [chainId, isConnected, switchChain]);
+		}, [chainId, isConnected, switchChain]);
+
+	const handleApiKeyConfirm = (apiKey: string) => {
+		setOpenaiApiKey(apiKey);
+		setIsLoading(true);
+		router.push("/home");
+	};
 
 	return (
 		<div className="container min-h-screen flex flex-col items-center text-foreground">
@@ -65,8 +75,12 @@ export default function LandingPage() {
 					{isConnected ? (
 						<Button
 							onClick={() => {
-								setIsLoading(true);
-								router.push("/home");
+								if (!openaiApiKey) {
+									setShowApiKeyDialog(true);
+								} else {
+									setIsLoading(true);
+									router.push("/home");
+								}
 							}}
 							disabled={isLoading}
 							className="rounded-full"
@@ -173,6 +187,13 @@ export default function LandingPage() {
 			<footer className="m-8 text-sm opacity-70 pb-8">
 				Built for ETHOxford • Powered by Avalanche & AI
 			</footer>
+
+			{/* API Key Dialog */}
+			<ApiKeyDialog
+				open={showApiKeyDialog}
+				onOpenChange={setShowApiKeyDialog}
+				onConfirm={handleApiKeyConfirm}
+			/>
 		</div>
 	);
 }

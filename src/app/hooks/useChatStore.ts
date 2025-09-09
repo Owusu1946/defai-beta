@@ -12,6 +12,7 @@ interface State {
 	currentChatId: string | null;
 	userName: string | "Elong Musk";
 	isLocal: boolean;
+	openaiApiKey: string | null;
 }
 
 interface Actions {
@@ -22,6 +23,7 @@ interface Actions {
 	handleDelete: (chatId: string, messageId?: string) => void;
 	setUserName: (userName: string) => void;
 	setIsLocal: (isLocal: boolean) => void;
+	setOpenaiApiKey: (apiKey: string) => void;
 }
 
 const useChatStore = create<State & Actions>()(
@@ -31,11 +33,13 @@ const useChatStore = create<State & Actions>()(
 			currentChatId: null,
 			userName: "Elon Musk",
 			isLocal: false,
+			openaiApiKey: null,
 
 			setUserName: (userName) => set({ userName }),
 
 			setCurrentChatId: (chatId) => set({ currentChatId: chatId }),
 			setIsLocal: (isLocal) => set({ isLocal }),
+			setOpenaiApiKey: (apiKey) => set({ openaiApiKey: apiKey }),
 			getChatById: (chatId) => {
 				const state = get();
 				return state.chats[chatId];
@@ -95,6 +99,7 @@ const useChatStore = create<State & Actions>()(
 				chats: state.chats,
 				currentChatId: state.currentChatId,
 				userName: state.userName,
+				openaiApiKey: state.openaiApiKey,
 			}),
 		}
 	)

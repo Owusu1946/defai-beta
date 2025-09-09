@@ -63,6 +63,7 @@ export default function Chat({ initialMessages, id }: ChatProps) {
 	const saveMessages = useChatStore((state) => state.saveMessages);
 	const getMessagesById = useChatStore((state) => state.getMessagesById);
 	const isLocal = useChatStore((state) => state.isLocal);
+	const openaiApiKey = useChatStore((state) => state.openaiApiKey);
 	const router = useRouter();
 
 	const isToolInProgress = messages.some(
@@ -88,6 +89,7 @@ export default function Chat({ initialMessages, id }: ChatProps) {
 		const requestOptions: ChatRequestOptions = {
 			body: {
 				isLocal: isLocal,
+				openaiApiKey: openaiApiKey,
 			},
 		};
 
@@ -157,6 +159,7 @@ export default function Chat({ initialMessages, id }: ChatProps) {
 							const requestOptions: ChatRequestOptions = {
 								body: {
 									isLocal: isLocal,
+									openaiApiKey: openaiApiKey,
 								},
 							};
 
